@@ -1,0 +1,106 @@
+---
+title: "cm004"
+author: "Wenzheng Zhou"
+date: "November 2, 2017"
+output: html_document
+---
+
+```{r}
+library(repurrrsive)
+library(listviewer)
+library(jsonlite)
+library(dplyr)
+library(tibble)
+library(purrr)
+```
+
+
+```{r}
+str(gh_repos)
+data("gh_repos")
+gh_repos[[1]]
+View(gh_repos)
+```
+
+
+Exercise: 
+
+--first see how to get name of second repo. i.e. go over every user, find [[2]] (second repo), and find the second elements which is the name of the repo
+```{r}
+gh_repos %>% 
+  map_chr(c(2,2))
+
+# get the name of second repo for first user
+gh_repos[[1]][[2]]["name"]
+```
+
+--get owner id of fourth repo for each user
+```{r}
+gh_repos %>% 
+  map_int(list(4,"owner","id"))
+
+#also we can use 
+gh_repos %>% 
+  map_int(c(4,4,2))
+```
+
+
+From list to data frame:
+--using enframe(), require library(tibble)
+
+```{r}
+#get user id for first repo
+u_id <- gh_repos %>% map_int(list(1,"owner","id"))
+
+# make the structure clear by setting names
+gh_repos_named <- gh_repos %>% set_names(u_id)
+str(gh_repos_named,max.level = 1)
+
+gh_repos_df <- gh_repos_named %>% 
+  enframe("user_id","repo_stuff")
+gh_repos_df
+```
+
+Exercise: create a data frame of repo with rowname being their login
+
+```{r}
+u_login <- gh_repos %>% map_chr(list(1,"owner","login"))
+
+gh_repos_login <- gh_repos %>% set_names(u_login)
+
+gh_repos_df1 <- gh_repos_login %>% 
+  enframe("user_login","repo_stuff")
+gh_repos_df1
+```
+
+
+```{r}
+gh_repos_df1 %>% filter(user_login %in% c("masalmon","leeper")) %>% 
+  mutate(number_of_repo=length(repo_stuff)) 
+#wired, only shows length 2
+#only returns the number of elements in repo_stuff columns in the new df
+
+#correct way
+gh_repos_df1 %>% filter(user_login %in% c("masalmon","leeper")) %>% 
+  mutate(number_of_repo=map_int(repo_stuff,length))
+#map actually goes into the original list
+```
+
+
+```{r}
+alliases_name <- set_names(map(got_chars,"aliases"),map(got_chars,"name"))
+
+length(alliases_name)
+
+map_int(alliases_name,length)
+
+
+collapse_by_comma <- function(vec_of_strings){paste(vec_of_strings,collapse = ",")}
+collapse_by_comma(c("first string","second string"))
+map(alliases_name,collapse_by_comma)
+
+map(alliases_name,function(v){paste(v,collapse=",")})
+map(alliases_name,paste,collapse=",")
+map(alliases_name,~ paste(.x,collapse = ","))
+```
+

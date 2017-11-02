@@ -1,0 +1,118 @@
+---
+title: "cm001-stat547"
+author: "Wenzheng Zhou"
+date: "October 24, 2017"
+output: html_document
+---
+
+## strings
+
+```{r}
+my_string <- "Surrounded by quotes"
+my_string <- 'doublue"quoted"string'
+my_string
+my_string <- "a slash \ "
+my_string
+my_string <- "a slash \\ "
+my_string
+```
+
+```{r}
+my_string1 <- `my_string`
+my_string2 <- 'my_string'
+my_string3 <- "my_string"
+my_string1==my_string2
+my_string2==my_string3
+```
+
+```{r}
+library(singer)
+places <- unique(singer_locations$city)
+str(places)
+nchar(c("City","double","a long string"))
+nchar(c("",NA,"     "))
+```
+
+### glue
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(glue)
+```
+
+```{r}
+age <- 12
+glue("my name is {my_string},My age two years ago was {age-1}")
+```
+```{r}
+glue("my name is", {my_string},", My age two years ago was", {age-1})
+```
+```{r}
+glue("my name is 
+     {my_string},
+     My age two years ago was 
+     {age-1}")
+```
+
+```{r}
+glue("Today is {Sys.Date()}")
+```
+
+```{r}
+phrase <- "Hello, today is {today}"
+glue(phrase,today=format(Sys.Date(),"%A,%B,%d,%Y"))
+```
+
+```{r}
+singer_locations %>% 
+  glue_data("{artist_name} is from {city}") %>% 
+  head()
+```
+
+### stringr
+
+```{r}
+getNamespaceExports("stringr") %>% str_view("str_")
+getNamespaceExports("stringr") %>% str_subset("str_")
+```
+
+Lets get all places containing the string york
+
+change it to the lower case:
+```{r}
+places %>% str_to_lower() %>% str_subset("york")
+```
+
+```{r}
+places %>% str_subset("[Yy]ork")
+```
+
+```{r}
+places %>% str_subset(coll("york",ignore_case=T))
+```
+
+want it to be end with york
+```{r}
+places %>% str_subset("York$")
+```
+start with york
+```{r}
+places %>% str_subset("^York")
+```
+
+call all digits containing some digits
+```{r}
+places %>% str_subset("[:digit:]")
+```
+
+```{r}
+places %>% str_subset("[Nn]ew [Yy]ork")
+```
+
+```{r}
+places %>% str_subset("B.a")
+places %>% str_subset("B.a+")##same
+places %>% str_subset("B.a*")## same with using ?, showing elements including only B and B and a both
+```
+

@@ -1,0 +1,59 @@
+---
+title: "cm002"
+author: "Wenzheng Zhou"
+date: "October 26, 2017"
+output: html_document
+---
+
+1.create a new fcn that takes a number and returns the reminder after diving by10. 
+```{r}
+mod_ten <- function(x){
+  if(!is.numeric(x)) {
+    stop('I am so sorry, but this function only works for numeric input!\n',
+         'You have provided an object of class: ', class(x)[1])
+}
+  x%%10
+  }
+```
+
+```{r}
+mod_fcn <- function(x,n){
+  if(!is.numeric(x)) {
+    stop('I am so sorry, but this function only works for numeric input!\n',
+         'You have provided an object of class: ', class(x)[1])
+  }
+  if(!is.numeric(n)) {
+    stop('I am so sorry, but this function only works for numeric input!\n',
+         'You have provided an object of class: ', class(n)[1])
+}
+  x%%n
+  }
+```
+
+with default value 
+```{r}
+mod_fcn <- function(x,n=10){
+  stopifnot(!is.integer(n))
+  int <- x%/%n
+  mod <- x%%n
+  output <- list(quotient=int,reminder=mod)
+  return(output)
+}
+mod_fcn(30,7)
+```
+
+```{r}
+qdiff7 <- function(x, probs = c(0, 1), na.rm = TRUE, ...) {
+  the_quantiles <- quantile(x = x, probs = probs, na.rm = na.rm, ...)
+  return(max(the_quantiles) - min(the_quantiles))
+}
+test_that('invalid args are detected', {
+  expect_error(qdiff7("eggplants are purple"))
+  expect_error(qdiff7(iris))
+  })
+test_that('NA handling works', {
+  expect_error(qdiff7(c(1:5, NA), na.rm = TRUE))
+  expect_equal(qdiff7(c(1:5, NA)), 4)
+})
+```
+
